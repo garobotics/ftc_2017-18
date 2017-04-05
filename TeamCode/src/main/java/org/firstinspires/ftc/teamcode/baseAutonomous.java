@@ -65,7 +65,9 @@ public class baseAutonomous extends LinearOpMode {
     //todo: edit this file or add more functionality
 
 
-    public void driveEncoders(int distance) {
+    public void driveEncoders(int distance, String direction) {
+        // options for distance = any int
+        // options for direction = FORWARD, BACKWARD, CRAB RIGHT, CRAB LEFT
 
         // reset encoders each time method is called
         wheelLF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -79,12 +81,42 @@ public class baseAutonomous extends LinearOpMode {
         wheelLF.setTargetPosition(distance);
         wheelRF.setTargetPosition(distance);
 
-        // move forward until the robot gets to the place
-        wheelLF.setPower(-1);
-        wheelRF.setPower(-1);
-        wheelLB.setPower(-1);
-        wheelRB.setPower(-1);
+        // direction is FORWARD
+        if (direction.equals("FORWARD")) {
+            wheelLF.setPower(-1);
+            wheelRF.setPower(-1);
+            wheelLB.setPower(-1);
+            wheelRB.setPower(-1);
+        }
+        // direction is BACKWARD
+        else if (direction.equals("BACKWARD")) {
+            wheelLF.setPower(1);
+            wheelRF.setPower(1);
+            wheelLB.setPower(1);
+            wheelRB.setPower(1);
+        }
+        else if (direction.equals("CRAB RIGHT")) {
+            //todo: crab right method
+        }
+        else if (direction.equals("CRAB LEFT")) {
+            //todo: crab left method
+        }
+        else { // STOP THE ROBOT IF A VALID DIRECTION IS NOT PASSED IN
+            wheelLF.setPower(0);
+            wheelRF.setPower(0);
+            wheelLB.setPower(0);
+            wheelRB.setPower(0);
+        }
 
+        // update telemetry
+        while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
+            telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
+            telemetry.update();
+        }
+    }
+
+    public void driveGyro(int degrees) {
+        //todo: create driveGyro method that takes in degrees to turn
     }
 
 
