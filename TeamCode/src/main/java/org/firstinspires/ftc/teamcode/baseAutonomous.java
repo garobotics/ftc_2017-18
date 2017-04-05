@@ -65,5 +65,27 @@ public class baseAutonomous extends LinearOpMode {
     //todo: edit this file or add more functionality
 
 
+    public void driveEncoders(int distance) {
+
+        // reset encoders each time method is called
+        wheelLF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // change mode to run to position
+        wheelLF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wheelRF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // set the target position to the parameter passed in
+        wheelLF.setTargetPosition(distance);
+        wheelRF.setTargetPosition(distance);
+
+        // move forward until the robot gets to the place
+        wheelLF.setPower(-1);
+        wheelRF.setPower(-1);
+        wheelLB.setPower(-1);
+        wheelRB.setPower(-1);
+
+    }
+
 
 }
