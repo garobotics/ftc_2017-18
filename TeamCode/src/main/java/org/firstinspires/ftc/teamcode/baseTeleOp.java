@@ -124,7 +124,7 @@ public class baseTeleOp extends OpMode {
     }
 
     @Override
-    // stops all motors when op mode is disabled from driver station
+    // stops all motors when opmode is disabled from driver station
     public void stop() {
         wheelRF.setPower(0.0);
         wheelRB.setPower(0.0);
