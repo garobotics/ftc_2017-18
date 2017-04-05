@@ -29,15 +29,6 @@ public class baseTeleOp extends OpMode {
         wheelLF = hardwareMap.dcMotor.get("lf");
         wheelLB = hardwareMap.dcMotor.get("lb");
 
-        //initialize servos
-        //theBouncer = hardwareMap.servo.get("bouncer");
-
-        //initialize sensors
-        //lineSensor = hardwareMap.opticalDistanceSensor.get("lsense");
-        //colorSensor = hardwareMap.colorSensor.get("csense");
-        //rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rsense");
-        //colorSensor.enableLed(false);
-
         //set directions of motors when driving
         wheelRF.setDirection(DcMotor.Direction.FORWARD);
         wheelRB.setDirection(DcMotor.Direction.REVERSE);
