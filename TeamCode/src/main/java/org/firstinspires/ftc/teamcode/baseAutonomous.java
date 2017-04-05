@@ -81,19 +81,35 @@ public class baseAutonomous extends LinearOpMode {
         wheelLF.setTargetPosition(distance);
         wheelRF.setTargetPosition(distance);
 
-        // direction is FORWARD
+
         if (direction.equals("FORWARD")) {
             wheelLF.setPower(-1);
             wheelRF.setPower(-1);
             wheelLB.setPower(-1);
             wheelRB.setPower(-1);
+
+
+            // check to see if robot is done yet
+            while (wheelLF.getCurrentPosition() > -distance && wheelRF.getCurrentPosition() > -distance) {
+                telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
+                telemetry.update();
+            }
+
         }
-        // direction is BACKWARD
         else if (direction.equals("BACKWARD")) {
             wheelLF.setPower(1);
             wheelRF.setPower(1);
             wheelLB.setPower(1);
             wheelRB.setPower(1);
+
+
+            // check to see if robot is done yet
+            while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
+                telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
+                telemetry.update();
+            }
+
+
         }
         else if (direction.equals("CRAB RIGHT")) {
             //todo: crab right method
@@ -101,14 +117,16 @@ public class baseAutonomous extends LinearOpMode {
         else if (direction.equals("CRAB LEFT")) {
             //todo: crab left method
         }
-        else { // STOP THE ROBOT IF A VALID DIRECTION IS NOT PASSED IN
+        else {
             wheelLF.setPower(0);
             wheelRF.setPower(0);
             wheelLB.setPower(0);
             wheelRB.setPower(0);
+            telemetry.addData("0", String.format("YOU DIDN'T PASS IN A VALID DIRECTION. I'M NOT MOVING."));
+            telemetry.update();
         }
 
-        // update telemetry
+        // check to see if robot is done yet
         while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
             telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
             telemetry.update();
