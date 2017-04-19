@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * Created by ga on 4/5/17.
  */
+
+@Autonomous(name="Base Autonomous")
+
 
 public class baseAutonomous extends LinearOpMode {
     //todo: make a working autonomous program lol
@@ -50,9 +55,16 @@ public class baseAutonomous extends LinearOpMode {
         waitForStart();
 
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
+        driveEncoders(5000, "FORWARD");
+        driveEncoders(5000, "BACKWARD");
+        driveEncoders(5000, "CRAB RIGHT");
+        driveEncoders(5000, "CRAB LEFT");
+
+        //todo: the roboto moves forward for a little and then stops - we don't know why
 
         // put other methods from below that we want to call here
         end();
+
     }
 
     public void end(){
@@ -66,7 +78,7 @@ public class baseAutonomous extends LinearOpMode {
 
 
     public void driveEncoders(int distance, String direction) {
-        // options for distance = any int
+        // options for distance = any integer (this is the target position)
         // options for direction = FORWARD, BACKWARD, CRAB RIGHT, CRAB LEFT
 
         // reset encoders each time method is called
@@ -111,11 +123,31 @@ public class baseAutonomous extends LinearOpMode {
 
 
         }
-        else if (direction.equals("CRAB RIGHT")) {
-            //todo: crab right method
+        else if (direction.equals("CRAB RIGHT")) { //
+            //todo: check crab right method
+            wheelRF.setPower(1);
+            wheelRB.setPower(-1);
+            wheelLF.setPower(-1);
+            wheelLB.setPower(1);
+
+            // check to see if robot is done yet
+            while (wheelLF.getCurrentPosition() > distance && wheelRF.getCurrentPosition() < distance) {
+                telemetry.addData("0", String.format("Crabbing right, please stand by..."));
+                telemetry.update();
+            }
         }
         else if (direction.equals("CRAB LEFT")) {
-            //todo: crab left method
+            //todo: check crab left method
+            wheelRF.setPower(-1);
+            wheelRB.setPower(1);
+            wheelLF.setPower(1);
+            wheelLB.setPower(-1);
+
+            // check to see if robot is done yet
+            while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() > distance) {
+                telemetry.addData("0", String.format("Crabbing right, please stand by..."));
+                telemetry.update();
+            }
         }
         else {
             wheelLF.setPower(0);
