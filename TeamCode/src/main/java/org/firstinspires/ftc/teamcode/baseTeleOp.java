@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
-//todo: see if we need to import Hardware Class
-
 
 /**
  * Created by ga on 3/29/17.
  */
+
+
+@TeleOp(name="Base TankBot")
 
 public class baseTeleOp extends OpMode {
 
@@ -30,14 +31,12 @@ public class baseTeleOp extends OpMode {
         wheelLB = hardwareMap.dcMotor.get("lb");
 
         //set directions of motors when driving
-        wheelRF.setDirection(DcMotor.Direction.FORWARD);
-        wheelRB.setDirection(DcMotor.Direction.REVERSE);
+        wheelRF.setDirection(DcMotor.Direction.REVERSE);
         wheelLF.setDirection(DcMotor.Direction.FORWARD);
-        wheelLB.setDirection(DcMotor.Direction.REVERSE);
+        wheelRB.setDirection(DcMotor.Direction.REVERSE);
+        wheelLB.setDirection(DcMotor.Direction.FORWARD);
 
     }
-
-    //todo: create loop function for basic mechanum drive
 
     @Override
     public void loop() {
@@ -160,6 +159,6 @@ public class baseTeleOp extends OpMode {
         return dScale;
     }
 
-    //todo: edit this file or build out more functionality
+
 
 }

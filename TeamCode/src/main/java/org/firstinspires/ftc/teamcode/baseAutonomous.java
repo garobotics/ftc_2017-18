@@ -30,10 +30,10 @@ public class baseAutonomous extends LinearOpMode {
 
 
         //set directions of motors when driving
-        wheelRF.setDirection(DcMotor.Direction.FORWARD);
-        wheelRB.setDirection(DcMotor.Direction.REVERSE);
+        wheelRF.setDirection(DcMotor.Direction.REVERSE);
         wheelLF.setDirection(DcMotor.Direction.FORWARD);
-        wheelLB.setDirection(DcMotor.Direction.REVERSE);
+        wheelRB.setDirection(DcMotor.Direction.REVERSE);
+        wheelLB.setDirection(DcMotor.Direction.FORWARD);
 
 
         // reset encoder target positions to 0 on drive wheels and ball flipper
@@ -91,7 +91,7 @@ public class baseAutonomous extends LinearOpMode {
 
             // check to see if robot is done yet
             while (wheelLF.getCurrentPosition() > -distance && wheelRF.getCurrentPosition() > -distance) {
-                telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
+                telemetry.addData("0", String.format("Moving forward, please stand by..."));
                 telemetry.update();
             }
 
@@ -105,7 +105,7 @@ public class baseAutonomous extends LinearOpMode {
 
             // check to see if robot is done yet
             while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
-                telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
+                telemetry.addData("0", String.format("Moving backward, please stand by..."));
                 telemetry.update();
             }
 
@@ -126,12 +126,8 @@ public class baseAutonomous extends LinearOpMode {
             telemetry.update();
         }
 
-        // check to see if robot is done yet
-        while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
-            telemetry.addData("0", String.format("Moving to beacon, please stand by..."));
-            telemetry.update();
         }
-    }
+
 
     public void driveGyro(int degrees) {
         //todo: create driveGyro method that takes in degrees to turn
