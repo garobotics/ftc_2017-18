@@ -62,7 +62,7 @@ public class baseAutonomous extends LinearOpMode {
         wheelLB.setPower(0.0);
     }
 
-    //todo: edit this file or add more functionality
+    //todo: add more functionality
 
 
     public void driveEncoders(int distance, String direction) {
