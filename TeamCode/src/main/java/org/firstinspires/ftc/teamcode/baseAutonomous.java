@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 public class baseAutonomous extends LinearOpMode {
-    //todo: make a working autonomous program lol
 
     public DcMotor wheelRF;
     public DcMotor wheelRB;
@@ -35,13 +34,13 @@ public class baseAutonomous extends LinearOpMode {
 
 
         //set directions of motors when driving
-        wheelRF.setDirection(DcMotor.Direction.REVERSE);
-        wheelLF.setDirection(DcMotor.Direction.FORWARD);
-        wheelRB.setDirection(DcMotor.Direction.REVERSE);
-        wheelLB.setDirection(DcMotor.Direction.FORWARD);
+        wheelRF.setDirection(DcMotor.Direction.FORWARD);
+        wheelLF.setDirection(DcMotor.Direction.REVERSE);
+        wheelRB.setDirection(DcMotor.Direction.FORWARD);
+        wheelLB.setDirection(DcMotor.Direction.REVERSE);
 
 
-        // reset encoder target positions to 0 on drive wheels and ball flipper
+        // reset encoder target positions to 0 on drive wheels
         wheelLF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -55,14 +54,11 @@ public class baseAutonomous extends LinearOpMode {
         waitForStart();
 
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
-        driveEncoders(5000, "FORWARD");
-        driveEncoders(5000, "BACKWARD");
-        driveEncoders(5000, "CRAB RIGHT");
-        driveEncoders(5000, "CRAB LEFT");
-
-        //todo: the roboto moves forward for a little and then stops - we don't know why
-
-        // put other methods from below that we want to call here
+        //driveEncoders(5000, "FORWARD");
+        //driveEncoders(5000, "CRAB RIGHT");
+        //todo: test backward and crab left (separately)
+        //driveEncoders(5000, "BACKWARD");
+        //driveEncoders(5000, "CRAB LEFT");
         end();
 
     }
@@ -73,8 +69,6 @@ public class baseAutonomous extends LinearOpMode {
         wheelLF.setPower(0.0);
         wheelLB.setPower(0.0);
     }
-
-    //todo: add more functionality
 
 
     public void driveEncoders(int distance, String direction) {
@@ -90,11 +84,13 @@ public class baseAutonomous extends LinearOpMode {
         wheelRF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // set the target position to the parameter passed in
-        wheelLF.setTargetPosition(distance);
-        wheelRF.setTargetPosition(distance);
 
 
         if (direction.equals("FORWARD")) {
+
+            wheelLF.setTargetPosition(-distance);
+            wheelRF.setTargetPosition(-distance);
+
             wheelLF.setPower(-1);
             wheelRF.setPower(-1);
             wheelLB.setPower(-1);
@@ -109,6 +105,9 @@ public class baseAutonomous extends LinearOpMode {
 
         }
         else if (direction.equals("BACKWARD")) {
+            wheelLF.setTargetPosition(distance);
+            wheelRF.setTargetPosition(distance);
+
             wheelLF.setPower(1);
             wheelRF.setPower(1);
             wheelLB.setPower(1);
@@ -117,35 +116,40 @@ public class baseAutonomous extends LinearOpMode {
 
             // check to see if robot is done yet
             while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() < distance) {
-                telemetry.addData("0", String.format("Moving backward, please stand by..."));
+                telemetry.addData("1", String.format("Moving backward, please stand by..."));
                 telemetry.update();
             }
 
 
         }
-        else if (direction.equals("CRAB RIGHT")) { //
-            //todo: check crab right method
+        else if (direction.equals("CRAB LEFT")) { //
+            wheelLF.setTargetPosition(-distance);
+            wheelRF.setTargetPosition(distance);
+
             wheelRF.setPower(1);
             wheelRB.setPower(-1);
             wheelLF.setPower(-1);
             wheelLB.setPower(1);
 
             // check to see if robot is done yet
-            while (wheelLF.getCurrentPosition() > distance && wheelRF.getCurrentPosition() < distance) {
-                telemetry.addData("0", String.format("Crabbing right, please stand by..."));
+            while (wheelLF.getCurrentPosition() > -distance && wheelRF.getCurrentPosition() < distance) {
+                telemetry.addData("2", String.format("Crabbing left, please stand by..."));
                 telemetry.update();
             }
         }
-        else if (direction.equals("CRAB LEFT")) {
-            //todo: check crab left method
+        else if (direction.equals("CRAB RIGHT")) {
+
+            wheelLF.setTargetPosition(distance);
+            wheelRF.setTargetPosition(-distance);
+
             wheelRF.setPower(-1);
             wheelRB.setPower(1);
             wheelLF.setPower(1);
             wheelLB.setPower(-1);
 
             // check to see if robot is done yet
-            while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() > distance) {
-                telemetry.addData("0", String.format("Crabbing right, please stand by..."));
+            while (wheelLF.getCurrentPosition() < distance && wheelRF.getCurrentPosition() > -distance) {
+                telemetry.addData("3", String.format("Crabbing right, please stand by..."));
                 telemetry.update();
             }
         }
@@ -154,11 +158,11 @@ public class baseAutonomous extends LinearOpMode {
             wheelRF.setPower(0);
             wheelLB.setPower(0);
             wheelRB.setPower(0);
-            telemetry.addData("0", String.format("YOU DIDN'T PASS IN A VALID DIRECTION. I'M NOT MOVING."));
+            telemetry.addData("4", String.format("YOU DIDN'T PASS IN A VALID DIRECTION. I'M NOT MOVING."));
             telemetry.update();
         }
 
-        }
+    }
 
 
     public void driveGyro(int degrees) {
