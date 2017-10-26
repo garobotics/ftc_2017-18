@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 
 /**
- * Created by ga on 3/29/17.
+ * Created by ga on 9/13/17.
  */
 
 
@@ -20,6 +22,11 @@ public class baseTeleOp extends OpMode {
     public DcMotor wheelRB;
     public DcMotor wheelLF;
     public DcMotor wheelLB;
+    public Servo jewelArm;
+    public Servo bbLeft;
+    public Servo bbRight;
+    long timerJA = 0;
+    long timerBB = 0;
 
     @Override
     public void init() {
@@ -29,6 +36,9 @@ public class baseTeleOp extends OpMode {
         wheelRB = hardwareMap.dcMotor.get("rb");
         wheelLF = hardwareMap.dcMotor.get("lf");
         wheelLB = hardwareMap.dcMotor.get("lb");
+        jewelArm = hardwareMap.servo.get("jewel");
+        bbLeft = hardwareMap.servo.get("BBL");
+        bbRight = hardwareMap.servo.get("BBR");
 
         //set directions of motors when driving
         wheelRF.setDirection(DcMotor.Direction.REVERSE);
@@ -45,9 +55,10 @@ public class baseTeleOp extends OpMode {
         float yVal = gamepad1.left_stick_y; //left joystick controls all wheels
         float xVal = gamepad1.left_stick_x;
         float spinner = gamepad1.right_stick_x; // x axis of the right joystick
+        boolean sideArm = gamepad1.a;
+        boolean boardDown = gamepad1.b;
 
-        // negate all values since the y axis is reversed on the joypads and -1 should be 1
-        yVal = -(yVal);
+
 
         // clip the right/left values so that the values never exceed +/- 1
         yVal = Range.clip(yVal, -1, 1);
@@ -118,8 +129,35 @@ public class baseTeleOp extends OpMode {
             wheelRF.setPower(spinner);
             wheelRB.setPower(spinner);
         }
-        else {
+
+        //todo TEST OUT THIS CODE FOR THE JEWEL ARM IT MIGHT NOT WORK
+        if(sideArm && timerJA > 75) { // if the a button is pressed
+            if (jewelArm.getPosition() == 0) { // if the arm is up
+                jewelArm.setPosition(1); // put the arm down
+            }
+            else {
+                jewelArm.setPosition(0); // bring the arm up
+
+            }
+            timerJA = 0;
         }
+        timerJA++;
+
+        //todo test if these balance board servos work - treat 2 servos as 1
+        if(boardDown && timerBB > 75) { // if the b button is pressed
+            if (bbRight.getPosition() == 1 && bbLeft.getPosition() == 0) { // if the wheels are up
+                bbLeft.setPosition(1); // for left arm 1 is out
+                bbRight.setPosition(0); // for right arm 0 is out
+            }
+            else {
+                bbLeft.setPosition(0); // for left arm 0 is in
+                bbRight.setPosition(1); // for right arm 1 is in
+
+            }
+            timerBB = 0;
+        }
+        timerBB++;
+
     }
 
     @Override
