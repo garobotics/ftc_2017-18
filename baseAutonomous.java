@@ -47,6 +47,7 @@ public class baseAutonomous extends LinearOpMode {
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
     String ballColor;
+    final int liftHeight = 1000;
 
 
     HardwarePushbot robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -101,6 +102,7 @@ public class baseAutonomous extends LinearOpMode {
         wheelRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelLB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelRB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set drive power to 0
         wheelRF.setPower(0.0);
@@ -151,25 +153,22 @@ public class baseAutonomous extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
         // run the vuforia method and store the result as a variable
-        relicTrackables.activate();
+        
+        /*relicTrackables.activate();
         RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // detect the pictogram pattern
         // telemetry the output of the method
         telemetry.addData("4", retImage);
         telemetry.update();
-
-        //sleep(3141);
-        liftGlyph();
-        knockJewel("red"); // knock the red jewel off the platform
-        //sleep(1000);
+        grabGlyph();
+        liftGlyph();*/
+        knockJewel("blue"); // knock the blue jewel off the platform
+        /*//sleep(1000);
 
         driveToBox(retImage); // drive to the correct location in front of the crypto box
-        //sleep(3141);
-        placeGlyph();
+        placeGlyph();*/
         end();
-        //driveEncoders(1,24,"forward",5);
 
     }
 
@@ -179,7 +178,6 @@ public class baseAutonomous extends LinearOpMode {
         wheelLF.setPower(0.0);
         wheelLB.setPower(0.0);
     }
-
 
     public void driveEncoders(double speed, double distance, String direction, double timeoutS) {
         int newTargetLB; // in ticks
@@ -301,7 +299,7 @@ public class baseAutonomous extends LinearOpMode {
             wheelRF.setPower(0);
             wheelRB.setPower(0);
             wheelLB.setPower(0);
-            sleep(5000);
+            //sleep(5000);
 /*
             // Turn off RUN_TO_POSITION
             wheelLF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -310,7 +308,6 @@ public class baseAutonomous extends LinearOpMode {
             //  sleep(250);   // optional pause after each move
         }
     }
-
 
     /* @param direction indicates whether we want the jewel arm to go in or out
     * This method allows us to control the jewelArm to knock off the ball */
@@ -422,7 +419,6 @@ public class baseAutonomous extends LinearOpMode {
 
     }
 
-
     //17 INCHES TO LEFT COLUMN
     //24 INCHES TO MIDDLE COLUMN
     //32 INCHES TO RIGHT COLUMN
@@ -453,23 +449,59 @@ public class baseAutonomous extends LinearOpMode {
     }
 
     public void liftGlyph() {
-        for(int t = 0; t < 3; t++){
-            glyphlyft.setPower(0.5);
+        double timeOutL = 2.5;
+        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphlyft.setTargetPosition(liftHeight);
+        glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        glyphlyft.setPower(0.5);
+
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeOutL) &&
+                (glyphlyft.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("Glyph lyft target: " , glyphlyft.getTargetPosition());
+
+            // show the current position of all four wheels
+            telemetry.addData("Glyph lyft current: ", glyphlyft.getCurrentPosition());
+            telemetry.update();
         }
-        glyphlyft.setPower(0.0);
+
+        // Stop all motion
+        glyphlyft.setPower(0);
     }
 
     public void placeGlyph() {
-        for (int t = 0; t < 3; t++){
-            glyphlyft.setPower(-0.5);
+        // set number of seconds motor should run for
+        double timeOutL = 2.5;
+        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphlyft.setTargetPosition(-liftHeight);
+        glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        glyphlyft.setPower(0.5);
+
+        while (opModeIsActive() &&
+                (runtime.seconds() < timeOutL) &&
+                (glyphlyft.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("Glyph lyft target: " , glyphlyft.getTargetPosition());
+
+            // show the current position of all four wheels
+            telemetry.addData("Glyph lyft current: ", glyphlyft.getCurrentPosition());
+            telemetry.update();
         }
-        glyphlyft.setPower(0.0);
-        glyphGripLeft.setPosition(1);
-        glyphGripRight.setPosition(1);
+
+        // Stop all motion
+        glyphlyft.setPower(0);
+
+        // open the glyph grabbers to release the glyph
+        glyphGripLeft.setPosition(0.5);
+        glyphGripRight.setPosition(0.7);
     }
 
     public void grabGlyph(){
-       glyphGripLeft.setPosition(0);
-        glyphGripRight.setPosition(0);
+        // close the grabbers to grab the glyph
+        glyphGripLeft.setPosition(0.6);
+        glyphGripRight.setPosition(0.6);
     }
 }
