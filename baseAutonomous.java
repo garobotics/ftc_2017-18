@@ -155,7 +155,7 @@ public class baseAutonomous extends LinearOpMode {
 
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
         // run the vuforia method and store the result as a variable
-        
+
         /*relicTrackables.activate();
         RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // detect the pictogram pattern
         // telemetry the output of the method

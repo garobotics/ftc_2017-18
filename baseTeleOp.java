@@ -72,8 +72,8 @@ public class baseTeleOp extends OpMode {
         float cube = gamepad2.right_stick_y; //y axis of the right joystick
         boolean sideArm = gamepad2.y;
         boolean in = gamepad2.x;
-        boolean boardDown = gamepad2.b;
-        boolean boardUp = gamepad2.a;
+        boolean boardDown = gamepad2.a;
+        boolean boardUp = gamepad2.b;
         boolean cubeClose = gamepad2.right_bumper;
         boolean cubeOpen = gamepad2.left_bumper;
 
@@ -178,7 +178,7 @@ public class baseTeleOp extends OpMode {
         //this code controls the servos that push down the balance board
         // when the b button on gamepad 1 is pressed, the mini arms will go to the opposite position
         // in if out, out if in
-        if (boardDown) { // if the b button is pressed
+        if (boardDown) { // if the b button is pressed // todo double check that this is right with the paper
             bbLeft.setPosition(1); // for left arm 1 is out
             bbRight.setPosition(0); // for right arm 0 is out
         }
