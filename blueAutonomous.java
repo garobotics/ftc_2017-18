@@ -152,33 +152,29 @@ public class blueAutonomous extends LinearOpMode {
         waitForStart();
 
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
-        // run the vuforia method and store the result as a variable
 
-        /*relicTrackables.activate();
-        RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // detect the pictogram pattern
+
+        // read the pictogram
+        relicTrackables.activate();
+        RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // run the vuforia method and store the result as a variable
         // telemetry the output of the method
         telemetry.addData("4", retImage);
         telemetry.update();
-        grabGlyph();
-        liftGlyph();*/
+
+        grabGlyph(); // grab the glyph
+        liftGlyph(); // lift the arm
 
         knockJewel("red"); // knock the blue jewel off the platform
         driveEncoders(1, 10, "forward", 15); // drive either forward off the balance board
 
-        /*//sleep(1000);
         driveToBox(retImage); // drive to the correct location in front of the crypto box
-        placeGlyph();*/
+        placeGlyph(); // open the grabber to place the glyph
 
         end();
 
     }
 
-    public void end(){
-        wheelRF.setPower(0.0);
-        wheelRB.setPower(0.0);
-        wheelLF.setPower(0.0);
-        wheelLB.setPower(0.0);
-    }
+
 
     public void driveEncoders(double speed, double distance, String direction, double timeoutS) {
         int newTargetLB; // in ticks
@@ -414,26 +410,26 @@ public class blueAutonomous extends LinearOpMode {
 
     }
 
-    //17 INCHES TO LEFT COLUMN
-    //24 INCHES TO MIDDLE COLUMN
-    //32 INCHES TO RIGHT COLUMN
     public void driveToBox(RelicRecoveryVuMark picDir) {
+        //17 INCHES TO LEFT COLUMN
+        //24 INCHES TO MIDDLE COLUMN
+        //32 INCHES TO RIGHT COLUMN
 
-        // now we are going to act on the information that is stored in the variable vumark
+        // now we are going to act on the information that is stored in the variable picDir
         if (picDir.equals(RelicRecoveryVuMark.LEFT)) { // if LEFT picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
-            driveEncoders(0.25, 17, "LEFT", 4); // crab to left column
+            driveEncoders(0.25, 17, "RIGHT", 4); // crab to left column
+            telemetry.addData("Driving status: ", "Left VuMark was  visible, driving to left column.");
+            telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.CENTER)) { // if CENTER picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARDS", 8); // backs off
-            driveEncoders(0.25, 24, "LEFT", 4); // crab to center column
+            driveEncoders(0.25, 24, "RIGHT", 4); // crab to center column
+            telemetry.addData("Driving status: ", "Center VuMark was  visible, driving to center column.");
+            telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.RIGHT)) { // if RIGHT picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARDS", 8); // backs off
-            driveEncoders(0.25, 32, "LEFT", 4); // crab to right column
+            driveEncoders(0.25, 32, "RIGHT", 4); // crab to right column
+            telemetry.addData("Driving status: ", "Right VuMark was  visible, driving to right column.");
+            telemetry.update();
         }
         else {
             telemetry.addData("Driving status: ", "VuMark was not visible, therefore no driving.");
@@ -444,7 +440,7 @@ public class blueAutonomous extends LinearOpMode {
     }
 
     public void liftGlyph() {
-        double timeOutL = 2.5;
+        double timeOutL = 2;
         glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphlyft.setTargetPosition(liftHeight);
         glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -468,7 +464,7 @@ public class blueAutonomous extends LinearOpMode {
 
     public void placeGlyph() {
         // set number of seconds motor should run for
-        double timeOutL = 2.5;
+        double timeOutL = 2;
         glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphlyft.setTargetPosition(-liftHeight);
         glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -479,10 +475,10 @@ public class blueAutonomous extends LinearOpMode {
                 (glyphlyft.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Glyph lyft target: " , glyphlyft.getTargetPosition());
+            telemetry.addData("Gliph lyft target: " , glyphlyft.getTargetPosition());
 
-            // show the current position of all four wheels
-            telemetry.addData("Glyph lyft current: ", glyphlyft.getCurrentPosition());
+            // show the current position of lyft
+            telemetry.addData("Gliph lyft current: ", glyphlyft.getCurrentPosition());
             telemetry.update();
         }
 
@@ -504,5 +500,12 @@ public class blueAutonomous extends LinearOpMode {
         //todo: create driveGyro method that takes in degrees to turn
         //clockwise is positive and counterclockwise is negative degrees
         //like teleop turning but instead of taking joystick entries, it takes a degree entry
+    }
+
+    public void end(){
+        wheelRF.setPower(0.0);
+        wheelRB.setPower(0.0);
+        wheelLF.setPower(0.0);
+        wheelLB.setPower(0.0);
     }
 }
