@@ -32,11 +32,14 @@ public class baseTeleOp extends OpMode {
     public DcMotor liftL;
     public DcMotor liftR;
     public DcMotor glyphLyft;
-    public Servo glyphGripRight;
-    public Servo glyphGripLeft;
+    public DcMotor leftSpinner;
+    public DcMotor rightSpinner;
+    public DcMotor winch;
+    public Servo frontRelic;
+    public Servo backRelic;
     long timerJA = 0;
     long timerBB = 0;
-    //long timerLift = 0;
+
 
     @Override
     public void init() {
@@ -50,8 +53,11 @@ public class baseTeleOp extends OpMode {
         bbLeft = hardwareMap.servo.get("BBL");
         bbRight = hardwareMap.servo.get("BBR");
         glyphLyft = hardwareMap.dcMotor.get("glyphlyft");
-        glyphGripRight = hardwareMap.servo.get("glyphHolderRight");
-        glyphGripLeft = hardwareMap.servo.get("glyphHolderLeft");
+        winch = hardwareMap.dcMotor.get("winch");
+        leftSpinner = hardwareMap.dcMotor.get("lSpin");
+        rightSpinner = hardwareMap.dcMotor.get("rSpin");
+        frontRelic = hardwareMap.servo.get("fr");
+        backRelic = hardwareMap.servo.get("br");
 
         //set directions of motors when driving
         wheelRF.setDirection(DcMotor.Direction.REVERSE);
@@ -59,6 +65,8 @@ public class baseTeleOp extends OpMode {
         wheelRB.setDirection(DcMotor.Direction.REVERSE);
         wheelLB.setDirection(DcMotor.Direction.FORWARD);
         glyphLyft.setDirection(DcMotor.Direction.REVERSE);
+        winch.setDirection(DcMotor.Direction.FORWARD);
+
 
     }
 
@@ -70,12 +78,15 @@ public class baseTeleOp extends OpMode {
         float xVal = gamepad1.right_stick_x;
         float spinner = gamepad1.left_stick_x; // x axis of the right joystick
         float cube = gamepad2.right_stick_y; //y axis of the right joystick
+        float feeder = gamepad2.left_stick_y; //y axis of the left joystick
+        float wunch = gamepad2.left_stick_x;
         boolean sideArm = gamepad2.y;
         boolean in = gamepad2.x;
-        boolean boardDown = gamepad2.a;
-        boolean boardUp = gamepad2.b;
-        boolean cubeClose = gamepad2.right_bumper;
-        boolean cubeOpen = gamepad2.left_bumper;
+        boolean boardDown = gamepad1.a;
+        boolean boardUp = gamepad1.b;
+        boolean relicGrab = gamepad2.right_bumper;
+        boolean relicRelease = gamepad2.left_bumper;
+
 
         // clip the right/left values so that the values never exceed +/- 1
         yVal = Range.clip(yVal, -1, 1);
@@ -88,7 +99,19 @@ public class baseTeleOp extends OpMode {
         xVal = (float) scaleInput(xVal);
         spinner = (float) scaleInput(spinner);
         cube = (float) scaleInput(cube);
+        feeder = (float) scaleInput(feeder);
 
+        //controls relic grabber
+        if(relicGrab){
+            frontRelic.setPosition(2.0);
+            backRelic.setPosition(-1.5);
+        }
+        if(relicRelease){
+            frontRelic.setPosition(0.5);
+            backRelic.setPosition(0.5);
+        }
+
+        //controls color sensor arm
         if (sideArm) {
             jewelArm.setPosition(0);
         }
@@ -96,7 +119,7 @@ public class baseTeleOp extends OpMode {
             jewelArm.setPosition(0.5);
         }
 
-        //controls glyph lift it literally lifts the cube
+        //controls glyph lift it literally lifts the cube, this is currently out of comission :)
         if (cube > 0.5) {
             glyphLyft.setPower(cube / 4);
         } else if (cube < -0.5) {
@@ -105,15 +128,31 @@ public class baseTeleOp extends OpMode {
             glyphLyft.setPower(0);
         }
 
-
-        if (cubeClose) {
-            glyphGripLeft.setPosition(0.6);
-            glyphGripRight.setPosition(0.6);
+        //controls winch, sends it out
+        if(wunch > 0){
+            winch.setPower(wunch);
+        }
+        else if (wunch < 0){
+            winch.setPower(-wunch);
+        }
+        else{
+            winch.setPower(0);
         }
 
-        if (cubeOpen) {
-            glyphGripLeft.setPosition(0.5);
-            glyphGripRight.setPosition(0.7);
+
+        if (feeder == 0){
+            leftSpinner.setPower(0.0);
+            rightSpinner.setPower(0.0);
+        }
+        //this will send a cube out, has not been tested, but once has change motor direction if necessary
+        if (feeder > 0){
+            leftSpinner.setPower(feeder);
+            rightSpinner.setPower(feeder);
+        }
+
+        if(feeder < 0){
+            leftSpinner.setPower(-feeder);
+            rightSpinner.setPower(-feeder);
         }
 
         // set power to 0 if joysticks are at (0,0)
@@ -187,25 +226,6 @@ public class baseTeleOp extends OpMode {
             bbRight.setPosition(0.6); // for right arm 1 is in
         }
 
-        /*
-        front motor should eventually be made into a servo so the position will hold with the
-        press of a button, but for now if the button is pressed and while it is being pressed, it
-        will either hold the cube or not hold the cube
-        */
-
-        /*if(cubeIn){
-            while (cubeIn) {
-                cubeGrabber.setPower(0.5);
-            }
-        }
-        else if(cubeOut){
-            while(cubeOut){
-                cubeGrabber.setPower(0.5);
-            }
-        }
-        else{
-            cubeGrabber.setPower(0);
-        }*/
 
         }
 

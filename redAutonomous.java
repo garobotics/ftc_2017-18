@@ -42,8 +42,6 @@ public class redAutonomous extends LinearOpMode {
     public Servo jewelArm;
     public ColorSensor colorSensor;
     public DcMotor glyphlyft;
-    public Servo glyphGripRight;
-    public Servo glyphGripLeft;
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
     String ballColor;
@@ -84,8 +82,7 @@ public class redAutonomous extends LinearOpMode {
         jewelArm = hardwareMap.servo.get("jewel");
         colorSensor = hardwareMap.colorSensor.get("sensor_color");
         glyphlyft = hardwareMap.dcMotor.get("glyphlyft");
-        glyphGripRight = hardwareMap.servo.get("glyphHolderRight");
-        glyphGripLeft = hardwareMap.servo.get("glyphHolderLeft");
+
 
 
         //set directions of motors when driving
@@ -93,7 +90,7 @@ public class redAutonomous extends LinearOpMode {
         wheelLF.setDirection(DcMotor.Direction.FORWARD);
         wheelRB.setDirection(DcMotor.Direction.REVERSE);
         wheelLB.setDirection(DcMotor.Direction.FORWARD);
-        glyphGripLeft.setDirection(Servo.Direction.REVERSE);
+
 
 
         // reset encoder target positions to 0 on drive wheels
@@ -158,17 +155,23 @@ public class redAutonomous extends LinearOpMode {
         RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // detect the pictogram pattern
         // telemetry the output of the method
         telemetry.addData("4", retImage);
-        telemetry.update();
-        grabGlyph();
-        liftGlyph();*/
+        telemetry.update();*/
+        //grabGlyph();
+        //liftGlyph();
 
-        // todo change the targetColor and direction depending on which team we are on
+        // todo this is what we actually do
         knockJewel("blue"); // knock the red jewel off the platform
-        driveEncoders(1, 10, "backward", 15); // drive backward off the balance board
 
-        /*//sleep(1000);
-        driveToBox(retImage); // drive to the correct location in front of the crypto box
-        placeGlyph();*/
+        driveEncoders(1, 20, "backward", 15); // drive backward off the balance board
+        driveEncoders(1, 3, "forward", 15); // drive forward away from the wall
+        driveEncoders(1, 3, "right", 15); // drive left to the triangle
+        driveEncoders(1, 4, "backward", 15); // drive back into triangle
+
+        //driveEncoders(0.25, 2, "backward", 4); // drive forward to make sure we are in the triangle
+
+        //sleep(1000);
+        //driveToBox(retImage); // drive to the correct location in front of the crypto box
+        //placeGlyph();
 
         end();
 
@@ -311,6 +314,101 @@ public class redAutonomous extends LinearOpMode {
         }
     }
 
+    public void turn(double speed, double distance, String direction, double timeoutS) {
+        int newTargetLB; // in ticks
+        int newTargetLF;
+        int newTargetRF;
+        int newTargetRB;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            // Convert inches to ticks
+            int inchesToTicks = (int) (distance * COUNTS_PER_INCH);
+
+            if (direction.equalsIgnoreCase("right")) { // if direction is forward
+                // change target positions to go forward
+                newTargetLB = wheelLB.getCurrentPosition() - inchesToTicks;
+                newTargetLF = wheelLF.getCurrentPosition() - inchesToTicks;
+                newTargetRF = wheelRF.getCurrentPosition() + inchesToTicks;
+                newTargetRB = wheelRB.getCurrentPosition() + inchesToTicks;
+
+                // set all wheels to new target positions
+                wheelLB.setTargetPosition(newTargetLB);
+                wheelLF.setTargetPosition(newTargetLF);
+                wheelRF.setTargetPosition(newTargetRF);
+                wheelRB.setTargetPosition(newTargetRB);
+            } else if (direction.equalsIgnoreCase("left")) { // if direction is backward
+                // change target positions to go backward
+                newTargetLB = wheelLB.getCurrentPosition() + inchesToTicks;
+                newTargetLF = wheelLF.getCurrentPosition() + inchesToTicks;
+                newTargetRF = wheelRF.getCurrentPosition() - inchesToTicks;
+                newTargetRB = wheelRB.getCurrentPosition() - inchesToTicks;
+
+                // set all wheels to new target positions
+                wheelLB.setTargetPosition(newTargetLB);
+                wheelLF.setTargetPosition(newTargetLF);
+                wheelRF.setTargetPosition(newTargetRF);
+                wheelRB.setTargetPosition(newTargetRB);
+            } else {
+                stop();
+                telemetry.addData("4", String.format("You didn't pass a valid direction. I refuse to move."));
+                telemetry.update();
+            }
+
+            // Turn On RUN_TO_POSITION
+            wheelLF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wheelRF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wheelLB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wheelRB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            telemetry.addData("4", "I'm driving");
+            telemetry.update();
+
+
+            // this is the absolute value because setPower works differently with encoders
+            wheelLF.setPower(Math.abs(speed));
+            wheelRF.setPower(Math.abs(speed));
+            wheelRB.setPower(Math.abs(speed));
+            wheelLB.setPower(Math.abs(speed));
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (wheelLF.isBusy() && wheelRF.isBusy() && wheelLB.isBusy() && wheelRB.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Distance wheels should go (inches): ", distance); // distance wheels should go
+                telemetry.addData("Right front target: ", wheelRF.getTargetPosition());
+                telemetry.addData("Right back target: ", wheelRB.getTargetPosition());
+                telemetry.addData("Left front target: ", wheelLF.getTargetPosition());
+                telemetry.addData("Left Back target: ", wheelLB.getTargetPosition());
+
+                // show the current position of all four wheels
+                telemetry.addData("Wheel LF", wheelLF.getCurrentPosition());
+                telemetry.addData("Wheel RF", wheelRF.getCurrentPosition());
+                telemetry.addData("Wheel RB", wheelRB.getCurrentPosition());
+                telemetry.addData("Wheel LB", wheelLB.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion
+            wheelLF.setPower(0);
+            wheelRF.setPower(0);
+            wheelRB.setPower(0);
+            wheelLB.setPower(0);
+            //sleep(5000);
+        }
+    }
+
     /* @param direction indicates whether we want the jewel arm to go in or out
     * This method allows us to control the jewelArm to knock off the ball */
     public void setJewelArm(String direction) {
@@ -349,13 +447,13 @@ public class redAutonomous extends LinearOpMode {
         // if the jewel is equal to the targetColor, drive forward to knock it off
         if (targetColor.equals(jewelColor)){
             //sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.5, "forward", 1); // drive forward
+            driveEncoders(0.25, 0.75, "forward", 1); // drive forward
             telemetry.addData("4", String.format("I see the opponent's color. Driving forward..."));
         }
         // if it's the opposite color, go backward
         else if (!jewelColor.equals("other")) {
             sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.5, "backward", 1); // drive backward
+            driveEncoders(0.25, 0.75, "backward", 1); // drive backward
             telemetry.addData("4", String.format("I see your team's color. Driving backward..."));
         }
         else { // it's "other"
@@ -415,25 +513,22 @@ public class redAutonomous extends LinearOpMode {
 
     }
 
-    //17 INCHES TO LEFT COLUMN
-    //24 INCHES TO MIDDLE COLUMN
-    //32 INCHES TO RIGHT COLUMN
     public void driveToBox(RelicRecoveryVuMark picDir) {
 
         // now we are going to act on the information that is stored in the variable vumark
         if (picDir.equals(RelicRecoveryVuMark.LEFT)) { // if LEFT picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
+            driveEncoders(0.5, 3, "FORWARD", 8); // drive forward off the balance board
             driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
             driveEncoders(0.25, 17, "LEFT", 4); // crab to left column
         }
         else if(picDir.equals(RelicRecoveryVuMark.CENTER)) { // if CENTER picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARDS", 8); // backs off
+            driveEncoders(0.5, 10, "FORWARD", 8); // drive forward off the balance board
+            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
             driveEncoders(0.25, 24, "LEFT", 4); // crab to center column
         }
         else if(picDir.equals(RelicRecoveryVuMark.RIGHT)) { // if RIGHT picture is detected
-            driveEncoders(0.5, 30, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARDS", 8); // backs off
+            driveEncoders(0.5, 18, "FORWARD", 8); // drive forward off the balance board
+            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
             driveEncoders(0.25, 32, "LEFT", 4); // crab to right column
         }
         else {
@@ -491,14 +586,14 @@ public class redAutonomous extends LinearOpMode {
         glyphlyft.setPower(0);
 
         // open the glyph grabbers to release the glyph
-        glyphGripLeft.setPosition(0.5);
-        glyphGripRight.setPosition(0.7);
+        //glyphGripLeft.setPosition(0.5);
+        //glyphGripRight.setPosition(0.7);
     }
 
     public void grabGlyph(){
         // close the grabbers to grab the glyph
-        glyphGripLeft.setPosition(0.6);
-        glyphGripRight.setPosition(0.6);
+        //glyphGripLeft.setPosition(0.6);
+        //glyphGripRight.setPosition(0.6);
     }
 
     public void driveGyro(int degrees) {

@@ -42,8 +42,6 @@ public class blueAutonomous extends LinearOpMode {
     public Servo jewelArm;
     public ColorSensor colorSensor;
     public DcMotor glyphlyft;
-    public Servo glyphGripRight;
-    public Servo glyphGripLeft;
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
     String ballColor;
@@ -84,8 +82,7 @@ public class blueAutonomous extends LinearOpMode {
         jewelArm = hardwareMap.servo.get("jewel");
         colorSensor = hardwareMap.colorSensor.get("sensor_color");
         glyphlyft = hardwareMap.dcMotor.get("glyphlyft");
-        glyphGripRight = hardwareMap.servo.get("glyphHolderRight");
-        glyphGripLeft = hardwareMap.servo.get("glyphHolderLeft");
+
 
 
         //set directions of motors when driving
@@ -93,7 +90,6 @@ public class blueAutonomous extends LinearOpMode {
         wheelLF.setDirection(DcMotor.Direction.FORWARD);
         wheelRB.setDirection(DcMotor.Direction.REVERSE);
         wheelLB.setDirection(DcMotor.Direction.FORWARD);
-        glyphGripLeft.setDirection(Servo.Direction.REVERSE);
 
 
         // reset encoder target positions to 0 on drive wheels
@@ -150,25 +146,31 @@ public class blueAutonomous extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
 
 
         // read the pictogram
-        relicTrackables.activate();
-        RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // run the vuforia method and store the result as a variable
+        //relicTrackables.activate();
+        //RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // run the vuforia method and store the result as a variable
         // telemetry the output of the method
-        telemetry.addData("4", retImage);
-        telemetry.update();
+        //telemetry.addData("4", retImage);
+        //telemetry.update();
 
-        grabGlyph(); // grab the glyph
-        liftGlyph(); // lift the arm
+        //grabGlyph(); // grab the glyph
+        //liftGlyph(); // lift the arm
 
-        knockJewel("red"); // knock the blue jewel off the platform
-        driveEncoders(1, 10, "forward", 15); // drive either forward off the balance board
+        //todo this is what we actually do
+        knockJewel("red"); // knock the red jewel off the platform
 
-        driveToBox(retImage); // drive to the correct location in front of the crypto box
-        placeGlyph(); // open the grabber to place the glyph
+        driveEncoders(1, 20, "forward", 15); // drive forward off the balance board
+        driveEncoders(1, 3, "backward", 15); // drive back away from the wall
+        driveEncoders(1, 3, "right", 15); // drive right to the triangle
+        driveEncoders(1, 4, "forward", 15); // drive forward into triangle
+
+        //driveEncoders(0.25, 2, "forward", 4); // drive forward to make sure we are in the triangle
+
+        //driveToBox(retImage); // drive to the correct location in front of the crypto box
+        //placeGlyph(); // open the grabber to place the glyph
 
         end();
 
@@ -344,13 +346,13 @@ public class blueAutonomous extends LinearOpMode {
         // if the jewel is equal to the targetColor, drive forward to knock it off
         if (targetColor.equals(jewelColor)){
             //sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.5, "forward", 1); // drive forward
+            driveEncoders(0.25, 3, "forward", 1); // drive forward
             telemetry.addData("4", String.format("I see the opponent's color. Driving forward..."));
         }
         // if it's the opposite color, go backward
         else if (!jewelColor.equals("other")) {
             sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.5, "backward", 1); // drive backward
+            driveEncoders(0.25, 3, "backward", 1); // drive backward
             telemetry.addData("4", String.format("I see your team's color. Driving backward..."));
         }
         else { // it's "other"
@@ -369,7 +371,7 @@ public class blueAutonomous extends LinearOpMode {
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
         telemetry.addData("HSV hue value: ",hsvValues[0]);
         telemetry.update();
-        sleep(2000);
+        sleep(1000);
         if ((hsvValues[0] > -1 && hsvValues[0] < 60) || hsvValues[0] > 300) { // if the hue is red
             ballColor = "red"; // set ball color to red
         }
@@ -414,20 +416,23 @@ public class blueAutonomous extends LinearOpMode {
         //17 INCHES TO LEFT COLUMN
         //24 INCHES TO MIDDLE COLUMN
         //32 INCHES TO RIGHT COLUMN
-
+        driveEncoders(0.5, 10, "FORWARD", 4);
+        sleep(500);
+        driveEncoders(0.5, 5, "BACKWARD", 4);
+        sleep(500);
         // now we are going to act on the information that is stored in the variable picDir
         if (picDir.equals(RelicRecoveryVuMark.LEFT)) { // if LEFT picture is detected
-            driveEncoders(0.25, 17, "RIGHT", 4); // crab to left column
+            driveEncoders(0.75, 3, "RIGHT", 4); // crab to left column
             telemetry.addData("Driving status: ", "Left VuMark was  visible, driving to left column.");
             telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.CENTER)) { // if CENTER picture is detected
-            driveEncoders(0.25, 24, "RIGHT", 4); // crab to center column
+            driveEncoders(0.75, 10, "RIGHT", 4); // crab to center column
             telemetry.addData("Driving status: ", "Center VuMark was  visible, driving to center column.");
             telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.RIGHT)) { // if RIGHT picture is detected
-            driveEncoders(0.25, 32, "RIGHT", 4); // crab to right column
+            driveEncoders(0.75, 18, "RIGHT", 4); // crab to right column
             telemetry.addData("Driving status: ", "Right VuMark was  visible, driving to right column.");
             telemetry.update();
         }
@@ -486,14 +491,14 @@ public class blueAutonomous extends LinearOpMode {
         glyphlyft.setPower(0);
 
         // open the glyph grabbers to release the glyph
-        glyphGripLeft.setPosition(0.5);
-        glyphGripRight.setPosition(0.7);
+        /*glyphGripLeft.setPosition(0.5);
+        glyphGripRight.setPosition(0.7);*/
     }
 
     public void grabGlyph(){
         // close the grabbers to grab the glyph
-        glyphGripLeft.setPosition(0.6);
-        glyphGripRight.setPosition(0.6);
+        /*glyphGripLeft.setPosition(0.6);
+        glyphGripRight.setPosition(0.6);*/
     }
 
     public void driveGyro(int degrees) {
