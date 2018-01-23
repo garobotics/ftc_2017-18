@@ -84,7 +84,6 @@ public class blueAutonomous extends LinearOpMode {
         glyphlyft = hardwareMap.dcMotor.get("glyphlyft");
 
 
-
         //set directions of motors when driving
         wheelRF.setDirection(DcMotor.Direction.REVERSE);
         wheelLF.setDirection(DcMotor.Direction.FORWARD);
@@ -150,11 +149,11 @@ public class blueAutonomous extends LinearOpMode {
 
 
         // read the pictogram
-        //relicTrackables.activate();
-        //RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // run the vuforia method and store the result as a variable
+        relicTrackables.activate();
+        RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // run the vuforia method and store the result as a variable
         // telemetry the output of the method
-        //telemetry.addData("4", retImage);
-        //telemetry.update();
+        telemetry.addData("4", retImage);
+        telemetry.update();
 
         //grabGlyph(); // grab the glyph
         //liftGlyph(); // lift the arm
@@ -163,14 +162,17 @@ public class blueAutonomous extends LinearOpMode {
         knockJewel("red"); // knock the red jewel off the platform
 
         driveEncoders(1, 20, "forward", 15); // drive forward off the balance board
-        driveEncoders(1, 3, "backward", 15); // drive back away from the wall
+
+        driveToBox(retImage); // drive to the correct location in front of the crypto box
+        //placeGlyph(); // open the grabber to place the glyph
+
+        /*driveEncoders(1, 3, "backward", 15); // drive back away from the wall
         driveEncoders(1, 3, "right", 15); // drive right to the triangle
-        driveEncoders(1, 4, "forward", 15); // drive forward into triangle
+        driveEncoders(1, 4, "forward", 15); // drive forward into triangle */
 
         //driveEncoders(0.25, 2, "forward", 4); // drive forward to make sure we are in the triangle
 
-        //driveToBox(retImage); // drive to the correct location in front of the crypto box
-        //placeGlyph(); // open the grabber to place the glyph
+
 
         end();
 
@@ -412,10 +414,8 @@ public class blueAutonomous extends LinearOpMode {
 
     }
 
+    //todo check the measurements for driving in front of the cryptobox columns, right now, left=3, center=10, right=18
     public void driveToBox(RelicRecoveryVuMark picDir) {
-        //17 INCHES TO LEFT COLUMN
-        //24 INCHES TO MIDDLE COLUMN
-        //32 INCHES TO RIGHT COLUMN
         driveEncoders(0.5, 10, "FORWARD", 4);
         sleep(500);
         driveEncoders(0.5, 5, "BACKWARD", 4);

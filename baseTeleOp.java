@@ -29,6 +29,7 @@ public class baseTeleOp extends OpMode {
     public Servo jewelArm;
     public Servo bbLeft;
     public Servo bbRight;
+
     public DcMotor liftL;
     public DcMotor liftR;
     public DcMotor glyphLyft;
@@ -44,20 +45,29 @@ public class baseTeleOp extends OpMode {
     @Override
     public void init() {
 
-        //initialize motors
+        //initialize wheels
         wheelRF = hardwareMap.dcMotor.get("rf");
         wheelRB = hardwareMap.dcMotor.get("rb");
         wheelLF = hardwareMap.dcMotor.get("lf");
         wheelLB = hardwareMap.dcMotor.get("lb");
+
+        //initialize jewel arm with color sensor
         jewelArm = hardwareMap.servo.get("jewel");
+
+        //initialize balance board arms
         bbLeft = hardwareMap.servo.get("BBL");
         bbRight = hardwareMap.servo.get("BBR");
+
+        //initialize large glyph arm
         glyphLyft = hardwareMap.dcMotor.get("glyphlyft");
-        winch = hardwareMap.dcMotor.get("winch");
+
+        //initialize glyph collector motors
         leftSpinner = hardwareMap.dcMotor.get("lSpin");
         rightSpinner = hardwareMap.dcMotor.get("rSpin");
-        frontRelic = hardwareMap.servo.get("fr");
-        backRelic = hardwareMap.servo.get("br");
+        //initialize winch and relic motors
+        winch = hardwareMap.dcMotor.get("winch");
+        frontRelic = hardwareMap.servo.get("fr"); //
+        backRelic = hardwareMap.servo.get("br"); //
 
         //set directions of motors when driving
         wheelRF.setDirection(DcMotor.Direction.REVERSE);
@@ -66,8 +76,6 @@ public class baseTeleOp extends OpMode {
         wheelLB.setDirection(DcMotor.Direction.FORWARD);
         glyphLyft.setDirection(DcMotor.Direction.REVERSE);
         winch.setDirection(DcMotor.Direction.FORWARD);
-
-
     }
 
     @Override
@@ -79,6 +87,7 @@ public class baseTeleOp extends OpMode {
         float spinner = gamepad1.left_stick_x; // x axis of the right joystick
         float cube = gamepad2.right_stick_y; //y axis of the right joystick
         float feeder = gamepad2.left_stick_y; //y axis of the left joystick
+
         float wunch = gamepad2.left_stick_x;
         boolean sideArm = gamepad2.y;
         boolean in = gamepad2.x;
@@ -86,7 +95,6 @@ public class baseTeleOp extends OpMode {
         boolean boardUp = gamepad1.b;
         boolean relicGrab = gamepad2.right_bumper;
         boolean relicRelease = gamepad2.left_bumper;
-
 
         // clip the right/left values so that the values never exceed +/- 1
         yVal = Range.clip(yVal, -1, 1);
@@ -138,7 +146,6 @@ public class baseTeleOp extends OpMode {
         else{
             winch.setPower(0);
         }
-
 
         if (feeder == 0){
             leftSpinner.setPower(0.0);

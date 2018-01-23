@@ -513,6 +513,7 @@ public class redAutonomous extends LinearOpMode {
 
     }
 
+    //todo check the measurements for driving in front of the cryptobox columns, right now, left=3, center=10, right=18
     public void driveToBox(RelicRecoveryVuMark picDir) {
 
         // now we are going to act on the information that is stored in the variable vumark
