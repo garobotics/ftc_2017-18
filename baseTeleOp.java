@@ -142,7 +142,7 @@ public class baseTeleOp extends OpMode {
         } else if (cube > 0.5) {
             glyphLyft.setPower(cube / 2);
         } else {
-            glyphLyft.setPower(0.5);
+            glyphLyft.setPower(0);
         }
 
         //controls winch, sends it out

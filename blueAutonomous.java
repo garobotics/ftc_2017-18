@@ -42,7 +42,7 @@ public class blueAutonomous extends LinearOpMode {
     public DcMotor wheelLB;
     public Servo jewelArm;
     public ColorSensor colorSensor;
-    public DcMotor glyphlyft;
+    public DcMotor glyphLift;
     // hsvValues is an array that will hold the hue, saturation, and value information.
     float hsvValues[] = {0F,0F,0F};
     String ballColor;
@@ -83,7 +83,7 @@ public class blueAutonomous extends LinearOpMode {
         wheelLB = hardwareMap.dcMotor.get("lb");
         jewelArm = hardwareMap.servo.get("jewel");
         colorSensor = hardwareMap.colorSensor.get("sensor_color");
-        glyphlyft = hardwareMap.dcMotor.get("glyphlyft");
+        glyphLift = hardwareMap.dcMotor.get("glyphlyft");
 
 
         //set directions of motors when driving
@@ -98,7 +98,7 @@ public class blueAutonomous extends LinearOpMode {
         wheelRF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelLB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelRB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // set drive power to 0
         wheelRF.setPower(0.0);
@@ -451,49 +451,49 @@ public class blueAutonomous extends LinearOpMode {
 
     public void liftGlyph() {
         double timeOutL = 2;
-        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphlyft.setTargetPosition(liftHeight);
-        glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        glyphlyft.setPower(0.5);
+        glyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphLift.setTargetPosition(liftHeight);
+        glyphLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        glyphLift.setPower(0.5);
 
         while (opModeIsActive() &&
                 (runtime.seconds() < timeOutL) &&
-                (glyphlyft.isBusy())) {
+                (glyphLift.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Glyph lyft target: " , glyphlyft.getTargetPosition());
+            telemetry.addData("Glyph lyft target: " , glyphLift.getTargetPosition());
 
             // show the current position of all four wheels
-            telemetry.addData("Glyph lyft current: ", glyphlyft.getCurrentPosition());
+            telemetry.addData("Glyph lyft current: ", glyphLift.getCurrentPosition());
             telemetry.update();
         }
 
         // Stop all motion
-        glyphlyft.setPower(0);
+        glyphLift.setPower(0);
     }
 
     public void placeGlyph() {
         // set number of seconds motor should run for
         double timeOutL = 2;
-        glyphlyft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphlyft.setTargetPosition(-liftHeight);
-        glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        glyphlyft.setPower(0.5);
+        glyphLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        glyphLift.setTargetPosition(-liftHeight);
+        glyphLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        glyphLift.setPower(0.5);
 
         while (opModeIsActive() &&
                 (runtime.seconds() < timeOutL) &&
-                (glyphlyft.isBusy())) {
+                (glyphLift.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Gliph lyft target: " , glyphlyft.getTargetPosition());
+            telemetry.addData("Gliph lyft target: " , glyphLift.getTargetPosition());
 
             // show the current position of lyft
-            telemetry.addData("Gliph lyft current: ", glyphlyft.getCurrentPosition());
+            telemetry.addData("Gliph lyft current: ", glyphLift.getCurrentPosition());
             telemetry.update();
         }
 
         // Stop all motion
-        glyphlyft.setPower(0);
+        glyphLift.setPower(0);
 
         // open the glyph grabbers to release the glyph
         /*glyphGripLeft.setPosition(0.5);
