@@ -76,6 +76,8 @@ public class baseTeleOp extends OpMode {
         wheelLB.setDirection(DcMotor.Direction.FORWARD);
         glyphLyft.setDirection(DcMotor.Direction.REVERSE);
         winch.setDirection(DcMotor.Direction.FORWARD);
+        leftSpinner.setDirection(DcMotor.Direction.FORWARD);
+        rightSpinner.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
@@ -88,7 +90,8 @@ public class baseTeleOp extends OpMode {
         float cube = gamepad2.right_stick_y; //y axis of the right joystick
         float feeder = gamepad2.left_stick_y; //y axis of the left joystick
 
-        float wunch = gamepad2.left_stick_x;
+        float posWunch = gamepad2.right_trigger;
+        float negWunch = gamepad2.left_trigger;
         boolean sideArm = gamepad2.y;
         boolean in = gamepad2.x;
         boolean boardDown = gamepad1.a;
@@ -101,6 +104,10 @@ public class baseTeleOp extends OpMode {
         xVal = Range.clip(xVal, -1, 1);
         spinner = Range.clip(spinner, -1, 1);
         cube = Range.clip(cube, -1, 1);
+        feeder = Range.clip(feeder, -1, 1);
+        posWunch = Range.clip(posWunch, 0, 1);
+        negWunch = Range.clip(negWunch, 0, 1);
+
 
         // scale the joystick value to make it easier to control the robot more precisely at slower speeds.
         yVal = (float) scaleInput(yVal);
@@ -108,6 +115,8 @@ public class baseTeleOp extends OpMode {
         spinner = (float) scaleInput(spinner);
         cube = (float) scaleInput(cube);
         feeder = (float) scaleInput(feeder);
+        posWunch = (float) scaleInput(posWunch);
+        negWunch = (float) scaleInput(negWunch);
 
         //controls relic grabber
         if(relicGrab){
@@ -128,20 +137,20 @@ public class baseTeleOp extends OpMode {
         }
 
         //controls glyph lift it literally lifts the cube, this is currently out of comission :)
-        if (cube > 0.5) {
-            glyphLyft.setPower(cube / 4);
-        } else if (cube < -0.5) {
+        if (cube < -0.5) {
+            glyphLyft.setPower(3 * cube / 4);
+        } else if (cube > 0.5) {
             glyphLyft.setPower(cube / 2);
         } else {
-            glyphLyft.setPower(0);
+            glyphLyft.setPower(0.5);
         }
 
         //controls winch, sends it out
-        if(wunch > 0){
-            winch.setPower(wunch);
+        if(posWunch > 0){
+            winch.setPower(posWunch);
         }
-        else if (wunch < 0){
-            winch.setPower(-wunch);
+        else if (negWunch > 0){
+            winch.setPower(-negWunch);
         }
         else{
             winch.setPower(0);
@@ -158,8 +167,8 @@ public class baseTeleOp extends OpMode {
         }
 
         if(feeder < 0){
-            leftSpinner.setPower(-feeder);
-            rightSpinner.setPower(-feeder);
+            leftSpinner.setPower(feeder);
+            rightSpinner.setPower(feeder);
         }
 
         // set power to 0 if joysticks are at (0,0)
@@ -273,6 +282,29 @@ public class baseTeleOp extends OpMode {
 
         return dScale;
     }
+
+    /*double halfInput(double dVal) {
+        double[] scaleArray = {0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24, 0.30, 0.36, 0.43, 0.50,
+        0.5};
+
+        int index = (int) (dVal * 12.0);
+        if (index < 0){
+            index = -index
+        }
+        else if (index > 12){
+            index = 12
+        }
+
+        double dScale = 0.0;
+        if (dVal < 0){
+            dScale = -scaleArray[index];
+        }
+        else{
+            dScale = scaleArray[index];
+        }
+
+        return dScale;
+    }*/
 
 }
 

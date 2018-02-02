@@ -35,6 +35,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class blueAutonomous extends LinearOpMode {
 
+    //declare everything before opMode runs
     public DcMotor wheelRF;
     public DcMotor wheelRB;
     public DcMotor wheelLF;
@@ -66,6 +67,7 @@ public class blueAutonomous extends LinearOpMode {
      * localization engine.
      */
     VuforiaLocalizer vuforia;
+
 
 
     @Override
@@ -161,7 +163,7 @@ public class blueAutonomous extends LinearOpMode {
         //todo this is what we actually do
         knockJewel("red"); // knock the red jewel off the platform
 
-        driveEncoders(1, 20, "forward", 15); // drive forward off the balance board
+        driveEncoders(1, 8, "forward", 15); // drive forward off the balance board
 
         driveToBox(retImage); // drive to the correct location in front of the crypto box
         //placeGlyph(); // open the grabber to place the glyph
@@ -172,14 +174,12 @@ public class blueAutonomous extends LinearOpMode {
 
         //driveEncoders(0.25, 2, "forward", 4); // drive forward to make sure we are in the triangle
 
-
-
         end();
 
     }
 
 
-
+    //main driving function
     public void driveEncoders(double speed, double distance, String direction, double timeoutS) {
         int newTargetLB; // in ticks
         int newTargetLF;
@@ -356,6 +356,8 @@ public class blueAutonomous extends LinearOpMode {
             sleep(1000); // wait 1 second
             driveEncoders(0.25, 3, "backward", 1); // drive backward
             telemetry.addData("4", String.format("I see your team's color. Driving backward..."));
+            driveEncoders(0.25, 6, "forward", 1); //drive forward so robot is at same spot
+            //regardless of color
         }
         else { // it's "other"
             setJewelArm("in"); // bring the arm back in and don't move
@@ -416,23 +418,26 @@ public class blueAutonomous extends LinearOpMode {
 
     //todo check the measurements for driving in front of the cryptobox columns, right now, left=3, center=10, right=18
     public void driveToBox(RelicRecoveryVuMark picDir) {
-        driveEncoders(0.5, 10, "FORWARD", 4);
+        driveEncoders(0.5, 10, "left", 4);
         sleep(500);
-        driveEncoders(0.5, 5, "BACKWARD", 4);
+        //driveEncoders(0.5, 5, "BACKWARD", 4);
         sleep(500);
         // now we are going to act on the information that is stored in the variable picDir
         if (picDir.equals(RelicRecoveryVuMark.LEFT)) { // if LEFT picture is detected
-            driveEncoders(0.75, 3, "RIGHT", 4); // crab to left column
+            driveEncoders(1, 10, "RIGHT", 4); // crab to left column
+            driveEncoders(1, 4, "forward", 4); //drive forward to column
             telemetry.addData("Driving status: ", "Left VuMark was  visible, driving to left column.");
             telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.CENTER)) { // if CENTER picture is detected
-            driveEncoders(0.75, 10, "RIGHT", 4); // crab to center column
+            driveEncoders(1, 13, "RIGHT", 4); // crab to center column
+            driveEncoders(1, 4, "forward", 4); //drive forward to column
             telemetry.addData("Driving status: ", "Center VuMark was  visible, driving to center column.");
             telemetry.update();
         }
         else if(picDir.equals(RelicRecoveryVuMark.RIGHT)) { // if RIGHT picture is detected
-            driveEncoders(0.75, 18, "RIGHT", 4); // crab to right column
+            driveEncoders(1, 16, "RIGHT", 4); // crab to right column
+            driveEncoders(1, 5, "forward", 4); //drive forward to column
             telemetry.addData("Driving status: ", "Right VuMark was  visible, driving to right column.");
             telemetry.update();
         }

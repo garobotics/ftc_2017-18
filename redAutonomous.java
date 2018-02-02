@@ -151,26 +151,25 @@ public class redAutonomous extends LinearOpMode {
         // METHODS GO HERE: THIS ACTS AS THE MAIN METHOD THAT CALLS ALL THE OTHER METHODS
         // run the vuforia method and store the result as a variable
 
-        /*relicTrackables.activate();
+        relicTrackables.activate();
         RelicRecoveryVuMark retImage = detectPattern(relicTemplate); // detect the pictogram pattern
         // telemetry the output of the method
         telemetry.addData("4", retImage);
-        telemetry.update();*/
+        telemetry.update();
         //grabGlyph();
         //liftGlyph();
 
         // todo this is what we actually do
-        knockJewel("blue"); // knock the red jewel off the platform
+        knockJewel("blue"); // knock the blue jewel off the platform
 
-        driveEncoders(1, 20, "backward", 15); // drive backward off the balance board
-        driveEncoders(1, 3, "forward", 15); // drive forward away from the wall
-        driveEncoders(1, 3, "right", 15); // drive left to the triangle
-        driveEncoders(1, 4, "backward", 15); // drive back into triangle
+        driveEncoders(1, 5, "backward", 1); // drive backward off the balance board
+        turn(1, 20, "right", 15);
+
 
         //driveEncoders(0.25, 2, "backward", 4); // drive forward to make sure we are in the triangle
 
         //sleep(1000);
-        //driveToBox(retImage); // drive to the correct location in front of the crypto box
+        driveToBox(retImage); // drive to the correct location in front of the crypto box
         //placeGlyph();
 
         end();
@@ -447,13 +446,14 @@ public class redAutonomous extends LinearOpMode {
         // if the jewel is equal to the targetColor, drive forward to knock it off
         if (targetColor.equals(jewelColor)){
             //sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.75, "forward", 1); // drive forward
+            driveEncoders(0.25, 3, "forward", 1); // drive forward
+            driveEncoders(0.25, 6, "backward", 1);
             telemetry.addData("4", String.format("I see the opponent's color. Driving forward..."));
         }
         // if it's the opposite color, go backward
         else if (!jewelColor.equals("other")) {
             sleep(1000); // wait 1 second
-            driveEncoders(0.25, 0.75, "backward", 1); // drive backward
+            driveEncoders(0.25, 3, "backward", 1); // drive backward
             telemetry.addData("4", String.format("I see your team's color. Driving backward..."));
         }
         else { // it's "other"
@@ -515,22 +515,21 @@ public class redAutonomous extends LinearOpMode {
 
     //todo check the measurements for driving in front of the cryptobox columns, right now, left=3, center=10, right=18
     public void driveToBox(RelicRecoveryVuMark picDir) {
+        driveEncoders(1, 10, "right", 4);
+        sleep(500);
 
         // now we are going to act on the information that is stored in the variable vumark
         if (picDir.equals(RelicRecoveryVuMark.LEFT)) { // if LEFT picture is detected
-            driveEncoders(0.5, 3, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
-            driveEncoders(0.25, 17, "LEFT", 4); // crab to left column
+            driveEncoders(1, 16, "LEFT", 4); // crab to left column
+            driveEncoders(1, 4, "forward", 4);
         }
         else if(picDir.equals(RelicRecoveryVuMark.CENTER)) { // if CENTER picture is detected
-            driveEncoders(0.5, 10, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
-            driveEncoders(0.25, 24, "LEFT", 4); // crab to center column
+            driveEncoders(15, 13, "LEFT", 4); // crab to center column
+            driveEncoders(1, 4, "forward", 4);
         }
         else if(picDir.equals(RelicRecoveryVuMark.RIGHT)) { // if RIGHT picture is detected
-            driveEncoders(0.5, 18, "FORWARD", 8); // drive forward off the balance board
-            driveEncoders(0.5, 8, "BACKWARD", 8); // backs off
-            driveEncoders(0.25, 32, "LEFT", 4); // crab to right column
+            driveEncoders(1, 10, "LEFT", 4); // crab to right column
+            driveEncoders(1, 4, "forward", 4);
         }
         else {
             telemetry.addData("Driving status: ", "VuMark was not visible, therefore no driving.");
